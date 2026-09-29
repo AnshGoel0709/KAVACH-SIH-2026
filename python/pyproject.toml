@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "drishti-ml"
+version = "0.1.0"
+description = "Drishti ML Services (OCR, Deep PII Detection & Vision Bridge)"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pydantic>=2.0.0",
+    "fastapi>=0.110.0",
+    "uvicorn>=0.28.0",
+]
+
+[project.optional-dependencies]
+ml = [
+    "presidio-analyzer>=2.2.0",
+    "easyocr>=1.7.0",
+    "pillow>=10.0.0",
+]

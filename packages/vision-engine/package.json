@@ -1,0 +1,26 @@
+{
+  "name": "@drishti/vision-engine",
+  "version": "0.1.0",
+  "description": "Vision reasoning engine for Drishti that strictly consumes SanitizedFrame",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsc -b",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@drishti/core": "*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  }
+}
