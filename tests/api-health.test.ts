@@ -51,8 +51,27 @@ describe('API Gateway Integration Tests', () => {
     assert.strictEqual(body.modules.privacyGuard.status, 'REAL');
     assert.strictEqual(body.modules.auditLogger.status, 'REAL');
     assert.strictEqual(body.modules.visionEngine.status, 'SIMULATED');
-    assert.strictEqual(body.modules.browserAgent.status, 'PLANNED');
+    assert.strictEqual(body.modules.browserAgent.status, 'REAL');
     assert.strictEqual(body.modules.taskPlanner.status, 'PLANNED');
+  });
+
+  test('GET /demo/privacy-form serves controlled synthetic test form', async () => {
+    const res = await fetch(`${baseUrl}/demo/privacy-form`);
+    assert.strictEqual(res.status, 200);
+    const html = await res.text();
+    assert.ok(html.includes('AURELIS_TEST_NAME'));
+    assert.ok(html.includes('test@example.local'));
+    assert.ok(html.includes('+91 9000000000'));
+    assert.ok(html.includes('AURELIS-ID-12345'));
+    assert.ok(html.includes('btn-continue'));
+  });
+
+  test('GET /api/agent/state returns initial orchestrator state', async () => {
+    const res = await fetch(`${baseUrl}/api/agent/state`);
+    assert.strictEqual(res.status, 200);
+    const state = await res.json();
+    assert.ok(state.state);
+    assert.ok(state.pipelineStages);
   });
 
   test('GET /api/privacy/status returns active detectors and invariants', async () => {

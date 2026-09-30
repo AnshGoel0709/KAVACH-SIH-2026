@@ -24,6 +24,26 @@ export type SensitiveCategory =
   | 'HEALTH'
   | 'CUSTOM_SYNTHETIC';
 
+export type FieldPolicyDecision =
+  | 'REDACT'
+  | 'POLICY_ALLOW'
+  | 'CONSENT_ALLOW'
+  | 'CONSENT_DENIED'
+  | 'PRESERVED';
+
+export interface EntityPolicyRecord {
+  readonly fieldId?: string;
+  readonly label: string;
+  readonly category: SensitiveCategory | string;
+  readonly rawText: string;
+  readonly redactedText: string;
+  readonly sensitivityLevel: 'LOW' | 'MODERATE' | 'HIGH' | 'NONE';
+  readonly isTaskRequired: boolean;
+  readonly decision: FieldPolicyDecision;
+  readonly decisionRationale: string;
+  readonly boundingBox?: BoundingBox;
+}
+
 export interface SensitiveRegion {
   readonly regionId: string;
   readonly category: SensitiveCategory;
@@ -44,6 +64,12 @@ export interface RedactionRecord {
   readonly appliedAt: number;
 }
 
+export interface DomBoundingBoxEntry {
+  readonly category: SensitiveCategory;
+  readonly text: string;
+  readonly box: BoundingBox;
+}
+
 /**
  * Raw browser frame containing unredacted visual pixels directly from the browser viewport.
  * MUST NEVER reach the Vision/AI reasoning layer directly.
@@ -57,6 +83,7 @@ export interface RawBrowserFrame {
   readonly height: number;
   readonly sourceUrl: string;
   readonly domTextSnapshot?: string;
+  readonly detectedDomBoxes?: readonly DomBoundingBoxEntry[];
 }
 
 /**
@@ -90,6 +117,7 @@ export function createRawBrowserFrame(params: {
   height: number;
   sourceUrl: string;
   domTextSnapshot?: string;
+  detectedDomBoxes?: readonly DomBoundingBoxEntry[];
 }): RawBrowserFrame {
   return {
     _brand: 'RawBrowserFrame',
@@ -100,6 +128,7 @@ export function createRawBrowserFrame(params: {
     height: params.height,
     sourceUrl: params.sourceUrl,
     domTextSnapshot: params.domTextSnapshot,
+    detectedDomBoxes: params.detectedDomBoxes,
   };
 }
 

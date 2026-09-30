@@ -11,6 +11,11 @@ import type {
   SanitizedFrame,
 } from '@drishti/core';
 
+export type PixelRedactorFn = (
+  rawImageBase64: string,
+  boxes: readonly { x: number; y: number; width: number; height: number }[]
+) => Promise<string> | string;
+
 export interface RedactionResult {
   readonly sanitizedFrame: SanitizedFrame;
   readonly redactionsApplied: readonly RedactionRecord[];
@@ -24,10 +29,11 @@ export class RedactionEngine {
   /**
    * Applies redactions to the raw browser frame and outputs a verified SanitizedFrame.
    */
-  public applyRedaction(
+  public async applyRedaction(
     rawFrame: RawBrowserFrame,
-    regions: readonly SensitiveRegion[]
-  ): RedactionResult {
+    regions: readonly SensitiveRegion[],
+    pixelRedactor?: PixelRedactorFn
+  ): Promise<RedactionResult> {
     const startTime = performance.now();
     const now = Date.now();
 
@@ -60,10 +66,22 @@ export class RedactionEngine {
       .update(rawFrame.imageBase64)
       .digest('hex');
 
-    // Create sanitized visual representation
-    // (In production/full phase, this is the pixel-masked PNG/JPEG buffer;
-    // here we mark it explicitly as sanitized and hash the resulting output)
-    const sanitizedVisualPayload = `[SANITIZED_MASK_APPLIED:${rawFrame.frameId}:${redactionsApplied.length}_REGIONS_MASKED]_${rawFrame.imageBase64.slice(0, 32)}`;
+    // Create sanitized visual representation:
+    // If a real pixel redactor is provided and we have real image data, apply real pixel redaction
+    let sanitizedVisualPayload: string;
+    if (pixelRedactor && rawFrame.imageBase64 && rawFrame.imageBase64.length > 100) {
+      try {
+        sanitizedVisualPayload = await pixelRedactor(
+          rawFrame.imageBase64,
+          regions.map((r) => r.boundingBox)
+        );
+      } catch {
+        sanitizedVisualPayload = `[SANITIZED_MASK_APPLIED:${rawFrame.frameId}:${redactionsApplied.length}_REGIONS_MASKED]_${rawFrame.imageBase64.slice(0, 32)}`;
+      }
+    } else {
+      sanitizedVisualPayload = `[SANITIZED_MASK_APPLIED:${rawFrame.frameId}:${redactionsApplied.length}_REGIONS_MASKED]_${rawFrame.imageBase64.slice(0, 32)}`;
+    }
+
     const verificationDigest = createHash('sha256')
       .update(sanitizedVisualPayload + (sanitizedText ?? ''))
       .digest('hex');

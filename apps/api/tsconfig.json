@@ -6,6 +6,7 @@
   },
   "references": [
     { "path": "../../packages/core" },
+    { "path": "../../packages/browser-agent" },
     { "path": "../../packages/privacy-guard" },
     { "path": "../../packages/vision-engine" },
     { "path": "../../packages/audit-logger" }

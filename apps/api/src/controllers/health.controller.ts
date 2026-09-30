@@ -48,9 +48,10 @@ export function getHealthStatus(_req: Request, res: Response): void {
         engineId: new DemoVisionEngine().engineId,
       },
       browserAgent: {
-        name: 'services/browser-agent',
-        status: 'PLANNED',
-        description: 'Playwright headless/headed browser session controller and screenshot capture',
+        name: '@drishti/browser-agent',
+        status: 'REAL',
+        description: 'Playwright Chromium browser session automation, viewport capture, and action execution',
+        version: '0.1.0',
       },
       taskPlanner: {
         name: 'services/task-planner',

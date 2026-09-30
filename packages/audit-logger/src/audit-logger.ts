@@ -74,7 +74,16 @@ export class AuditLogger {
     });
   }
 
-  public getEvents(limit: number = 50): readonly AuditEvent[] {
+  public clear(): void {
+    this.events.length = 0;
+    this.privacyProofs.clear();
+    this.lastHash = '0000000000000000000000000000000000000000000000000000000000000000';
+  }
+
+  public getEvents(limit: number = 50, runId?: string): readonly AuditEvent[] {
+    if (runId) {
+      return this.events.filter((e) => e.metadata?.['runId'] === runId).slice(-limit);
+    }
     return this.events.slice(-limit);
   }
 

@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "@drishti/audit-logger": "*",
+    "@drishti/browser-agent": "*",
     "@drishti/core": "*",
     "@drishti/privacy-guard": "*",
     "@drishti/vision-engine": "*",

@@ -6,6 +6,7 @@
 import express, { type Express } from 'express';
 import cors from 'cors';
 import { apiRouter } from './routes/api.routes.js';
+import { demoRouter } from './routes/demo.routes.js';
 
 export function createServer(): Express {
   const app = express();
@@ -22,8 +23,9 @@ export function createServer(): Express {
     next();
   });
 
-  // Mount API routes
+  // Mount API & Demo routes
   app.use('/api', apiRouter);
+  app.use('/demo', demoRouter);
 
   // Root welcome & architecture manifest
   app.get('/', (_req, res) => {

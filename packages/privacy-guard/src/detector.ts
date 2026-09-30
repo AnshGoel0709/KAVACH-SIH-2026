@@ -4,13 +4,14 @@
  */
 
 import { createHash } from 'node:crypto';
-import type { SensitiveCategory, SensitiveRegion, BoundingBox } from '@drishti/core';
+import type { SensitiveCategory, SensitiveRegion, BoundingBox, DomBoundingBoxEntry } from '@drishti/core';
 
 export interface DetectionInput {
   readonly frameId: string;
   readonly textSnapshot?: string;
   readonly width: number;
   readonly height: number;
+  readonly detectedDomBoxes?: readonly DomBoundingBoxEntry[];
 }
 
 export interface SensitiveDataDetector {
@@ -76,6 +77,18 @@ export class RuleBasedSensitiveDetector implements SensitiveDataDetector {
   ];
 
   public async detect(input: DetectionInput): Promise<readonly SensitiveRegion[]> {
+    // If exact DOM bounding boxes were supplied by the browser controller, map them directly
+    if (input.detectedDomBoxes && input.detectedDomBoxes.length > 0) {
+      return input.detectedDomBoxes.map((entry, idx) => ({
+        regionId: `sr-dom-${input.frameId}-${idx + 1}`,
+        category: entry.category,
+        boundingBox: entry.box,
+        contentHash: hashSecret(entry.text),
+        confidence: 0.99,
+        detectionMethod: 'DOM_TEXT_MATCH',
+      }));
+    }
+
     const text = input.textSnapshot ?? '';
     if (!text) {
       return [];
