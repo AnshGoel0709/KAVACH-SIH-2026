@@ -30,9 +30,9 @@ export function createServer(): Express {
   
 
   // Root welcome & architecture manifest
-  app.get('/', (_req, res) => {
+  app.get('/api/info', (_req, res) => {
     res.json({
-      name: 'Drishti API Gateway',
+      name: 'KAVACH API Gateway',
       prototype: 'SIH 2026',
       team: 'Aurelis',
       version: '0.1.0',
