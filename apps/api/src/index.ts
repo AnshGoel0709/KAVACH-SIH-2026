@@ -9,7 +9,7 @@ import { globalAuditLogger } from '@drishti/audit-logger';
 const PORT = process.env['PORT'] ? parseInt(process.env['PORT'], 10) : 3001;
 const app = createServer();
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log(`=======================================================`);
   console.log(`  DRISHTI // Privacy-Preserving Browser Vision Agent   `);
   console.log(`  Team Aurelis - Smart India Hackathon 2026 Prototype  `);

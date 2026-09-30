@@ -7,6 +7,7 @@ import express, { type Express } from 'express';
 import cors from 'cors';
 import { apiRouter } from './routes/api.routes.js';
 import { demoRouter } from './routes/demo.routes.js';
+import path from 'node:path';
 
 export function createServer(): Express {
   const app = express();
@@ -26,6 +27,7 @@ export function createServer(): Express {
   // Mount API & Demo routes
   app.use('/api', apiRouter);
   app.use('/demo', demoRouter);
+  
 
   // Root welcome & architecture manifest
   app.get('/', (_req, res) => {
@@ -44,6 +46,15 @@ export function createServer(): Express {
       ],
     });
   });
+
+  // Production: serve the built React frontend from the same Express server
+const webDistPath = path.resolve(process.cwd(), 'apps/web/dist');
+
+app.use(express.static(webDistPath));
+
+app.get('*', (_req, res) => {
+  res.sendFile(path.join(webDistPath, 'index.html'));
+});
 
   return app;
 }
