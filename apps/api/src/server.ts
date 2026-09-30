@@ -48,7 +48,7 @@ export function createServer(): Express {
   });
 
   // Production: serve the built React frontend from the same Express server
-const webDistPath = path.resolve(process.cwd(), 'apps/web/dist');
+const webDistPath = path.resolve(process.cwd(), '../../apps/web/dist');
 
 app.use(express.static(webDistPath));
 
