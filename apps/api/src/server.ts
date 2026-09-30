@@ -8,6 +8,7 @@ import cors from 'cors';
 import { apiRouter } from './routes/api.routes.js';
 import { demoRouter } from './routes/demo.routes.js';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 export function createServer(): Express {
   const app = express();
@@ -48,7 +49,10 @@ export function createServer(): Express {
   });
 
   // Production: serve the built React frontend from the same Express server
-const webDistPath = path.resolve(process.cwd(), '../../apps/web/dist');
+const webDistPath = path.resolve(
+  path.dirname(fileURLToPath(import.meta.url)),
+  '../../web/dist',
+);
 
 app.use(express.static(webDistPath));
 
