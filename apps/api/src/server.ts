@@ -31,6 +31,26 @@ export function createServer(): Express {
   
 
   // Root welcome & architecture manifest
+  app.get('/', (req, res, next) => {
+    if (req.headers['accept']?.includes('text/html') && process.env['NODE_ENV'] !== 'test') {
+      return next();
+    }
+    res.json({
+      name: 'KAVACH API Gateway',
+      prototype: 'SIH 2026',
+      team: 'Aurelis',
+      version: '0.1.0',
+      status: 'ONLINE',
+      endpoints: [
+        'GET /api/health',
+        'GET /api/privacy/status',
+        'POST /api/privacy/verify-sample',
+        'GET /api/audit/logs',
+        'GET /api/audit/proofs',
+      ],
+    });
+  });
+
   app.get('/api/info', (_req, res) => {
     res.json({
       name: 'KAVACH API Gateway',

@@ -11,6 +11,7 @@ import {
 import { TechnicalSpecsModal } from './components/TechnicalSpecsModal.js';
 import { ActivityDrawer } from './components/ActivityDrawer.js';
 import { PrivacyConsentModal } from './components/PrivacyConsentModal.js';
+import { LandingPage } from './components/LandingPage.js';
 import type { AuditLogEntry } from './components/AuditStream.js';
 import { getBenchmarkPreset } from './types/benchmark.js';
 
@@ -79,6 +80,9 @@ const PENDING_STAGES: PipelineStages = {
 };
 
 export const App: React.FC = () => {
+  // 0. LANDING PAGE STATE
+  const [hasEntered, setHasEntered] = useState<boolean>(false);
+
   // 1. DRAFT TASK SELECTION (User-controlled, isolated from execution)
   const [draftTaskId, setDraftTaskId] = useState<string>('identity-verification');
   const [draftPrompt, setDraftPrompt] = useState<string>(() => {
@@ -287,6 +291,10 @@ export const App: React.FC = () => {
   const currentRedactions = isRunForCurrentTask ? activeRun?.redactionsCount || 0 : 0;
   const currentAllowed = isRunForCurrentTask ? activeRun?.privacyProof?.allowedByPolicyCount || 0 : 0;
   const currentError = isRunForCurrentTask ? activeRun?.error : undefined;
+
+  if (!hasEntered) {
+    return <LandingPage onEnter={() => setHasEntered(true)} />;
+  }
 
   return (
     <div className="command-center">
